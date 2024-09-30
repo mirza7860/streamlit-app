@@ -2,3 +2,4 @@ streamlit
 requests
 beautifulsoup4==4.11.1
 gradio-client==0.16.2
+lxml
