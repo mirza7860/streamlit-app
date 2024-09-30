@@ -1,0 +1,4 @@
+beautifulsoup4==4.11.1
+gradio-client==0.16.2
+requests==2.28.1
+streamlit==1.21.0
