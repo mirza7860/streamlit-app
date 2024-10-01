@@ -89,7 +89,7 @@ articles = collection.find()
 if articles:
     for article in articles:
         st.subheader(article['title'])
-        st.write(article['description'])
+        st.write(article['full_article'])
         st.write(f"[Read more]({article['link']})")
         st.write(f"Published: {article['published']}")
         st.image(article['image'])
