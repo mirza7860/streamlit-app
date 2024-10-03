@@ -30,7 +30,7 @@ def scrape_full_article(url):
 def summarize_article(article_text):
     try:
         result = client.predict(param_0=article_text, api_name="/predict")
-        return result[0] if isinstance(result, list) and result else "No summary available."
+        return result[0] if isinstance(result, list) and result else "Full article content not found."
     except Exception as e:
         return f"Failed to summarize the article: {e}"
 
