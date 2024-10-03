@@ -62,15 +62,17 @@ def fetch_and_save_articles():
         full_article = scrape_full_article(link)
 
         if full_article != 'Full article content not found.':
-            news_items.append({
-                "title": title,
-                "link": link,
-                "description": description,
-                "published": published,
-                "image": image,
-                "full_article": full_article,
-                "summary": summarize_article(full_article)  # Summarize during fetching
-            })
+            summary = summarize_article(full_article)
+            if summary and summary != "Summary not available.":
+                news_items.append({
+                    "title": title,
+                    "link": link,
+                    "description": description,
+                    "published": published,
+                    "image": image,
+                    "full_article": full_article,
+                    "summary": summary  # Summarize during fetching
+                })
 
     # Insert articles into MongoDB
     if news_items:
