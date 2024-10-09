@@ -15,6 +15,8 @@ collection = db['articles']
 
 # Initialize the summarization model
 client = Client("yuvrajmonga/google-pegasus-cnn_dailymail")
+News_Cateogory_client = Client("mssab/News_Categorization")
+
 
 def fetch_rss_feed(rss_url):
     response = requests.get(rss_url)
@@ -61,6 +63,9 @@ def fetch_and_save_articles():
 
         full_article = scrape_full_article(link)
 
+        category = News_Cateogory_client.predict(
+            text=full_article, api_name="/predict")
+
         if full_article != 'Full article content not found.':
             summary = summarize_article(full_article)
             if summary and summary != "Summary not available.":
@@ -71,7 +76,8 @@ def fetch_and_save_articles():
                     "published": published,
                     "image": image,
                     "full_article": full_article,
-                    "summary": summary  # Summarize during fetching
+                    "summary": summary,
+                    "category":category
                 })
 
     # Insert articles into MongoDB
@@ -97,6 +103,8 @@ if articles:
         st.image(article['image'])
         st.write("Summary:")
         st.write(article['summary'])
+        st.write("Category:")
+        st.write(article['category'])
         st.write("---")
 else:
     st.write("No articles found in the database.")
