@@ -103,8 +103,9 @@ if articles:
         st.image(article['image'])
         st.write("Summary:")
         st.write(article['summary'])
-        st.write("Category:")
-        st.write(article['category'])
+        if article['category']:
+            st.write("Category:")
+            st.write(article['category'])
         st.write("---")
 else:
     st.write("No articles found in the database.")
