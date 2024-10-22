@@ -12,6 +12,7 @@ MONGO_URL = 'mongodb+srv://mirzanausadallibaig:Sahil%23123@cluster0.mhg9q.mongod
 mongo_client = MongoClient(MONGO_URL)
 db = mongo_client['news_articles']
 collection = db['articles']
+categories_collection = db['categories']  # Reference to the categories collection
 
 # Initialize the summarization model
 client = Client("yuvrajmonga/google-pegasus-cnn_dailymail")
@@ -49,6 +50,11 @@ def summarize_article(article_text):
     except Exception as e:
         return f"Failed to summarize the article: {e}"
 
+def fetch_category_id(category_name):
+    """Fetch the category ID by its name."""
+    category = categories_collection.find_one({"name": category_name})
+    return category['_id'] if category else None
+
 def fetch_and_save_articles():
     rss_url = 'https://www.cbsnews.com/latest/rss/main'
     feed = fetch_rss_feed(rss_url)
@@ -63,12 +69,20 @@ def fetch_and_save_articles():
 
         full_article = scrape_full_article(link)
 
-        category = News_Cateogory_client.predict(
-            text=full_article, api_name="/predict")
+        # Fetch the category for the article
+        category_name = News_Category_client.predict(text=full_article, api_name="/predict")
 
         if full_article != 'Full article content not found.':
             summary = summarize_article(full_article)
             if summary and summary != "Summary not available.":
+                 # Check if the category exists in the database
+                category_id = fetch_category_id(category_name)
+
+                # If the category does not exist, insert it
+                if category_id is None:
+                    categories_collection.insert_one({"name": category_name})
+                    category_id = fetch_category_id(category_name)  # Fetch the new ID
+
                 news_items.append({
                     "title": title,
                     "link": link,
@@ -77,7 +91,7 @@ def fetch_and_save_articles():
                     "image": image,
                     "full_article": full_article,
                     "summary": summary,
-                    "category":category
+                     "category_id": category_id  # Store the category ID
                 })
 
     # Insert articles into MongoDB
@@ -103,9 +117,13 @@ if articles:
         st.image(article['image'])
         st.write("Summary:")
         st.write(article['summary'])
-        if article['category']:
+        
+        # Fetch and display the category name using category_id
+        category = categories_collection.find_one({"_id": article['category_id']})
+        if category:
             st.write("Category:")
-            st.write(article['category'])
+            st.write(category['name'])
+       
         st.write("---")
 else:
     st.write("No articles found in the database.")
