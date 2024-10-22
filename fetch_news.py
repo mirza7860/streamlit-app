@@ -16,7 +16,7 @@ categories_collection = db['categories']  # Reference to the categories collecti
 
 # Initialize the summarization model
 client = Client("yuvrajmonga/google-pegasus-cnn_dailymail")
-News_Cateogory_client = Client("mssab/News_Categorization")
+News_Category_client = Client("mssab/News_Categorization")
 
 
 def fetch_rss_feed(rss_url):
