@@ -91,7 +91,7 @@ def fetch_and_save_articles():
                     "image": image,
                     "full_article": full_article,
                     "summary": summary,
-                     "category_id": category_id  # Store the category ID
+                    "category": category_id  # Store the category ID
                 })
 
     # Insert articles into MongoDB
