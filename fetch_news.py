@@ -119,7 +119,7 @@ if articles:
         st.write(article['summary'])
         
         # Fetch and display the category name using category_id
-        category = categories_collection.find_one({"_id": article['category_id']})
+        category = categories_collection.find_one({"_id": article['category']})
         if category:
             st.write("Category:")
             st.write(category['name'])
